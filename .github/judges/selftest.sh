@@ -25,9 +25,10 @@ expect 1 json-string        '"x"'
 expect 1 empty-object       '{}'
 expect 1 empty              ''
 expect 1 garbage            'not json'
+expect 1 findings-not-objects '{"verdict":"APPROVE","confidence":"certain","summary":"x","findings":["s"]}'
 STUB_IDS=$'42\n43' expect 0 sticky-existing '{"verdict":"APPROVE","confidence":"likely","summary":"ok","findings":[]}'
 grep -q "PATCH repos/o/r/issues/comments/42" "$STUB_LOG" && echo "ok   sticky-existing patched oldest id" || { echo "FAIL sticky PATCH"; fail=1; }
-[ "$(grep -c '^verdict=' "$GITHUB_OUTPUT")" -eq 10 ] && echo "ok   verdict written 10/10" || { echo "FAIL GITHUB_OUTPUT count"; fail=1; }
+[ "$(grep -c '^verdict=' "$GITHUB_OUTPUT")" -eq 11 ] && echo "ok   verdict written 11/11" || { echo "FAIL GITHUB_OUTPUT count"; fail=1; }
 # prepare-inputs with hostile text
 if BASE_REF=main PR_TITLE='-n $(title) `x`' PR_BODY=$'body\n$(rm -rf /)' GITHUB_WORKSPACE=. .github/judges/prepare-inputs.sh >/dev/null 2>&1 \
    && grep -qF -- '-n $(title) `x`' .judge-input/contract.md && grep -qF '$(rm -rf /)' .judge-input/contract.md; then

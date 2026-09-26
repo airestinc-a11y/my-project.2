@@ -9,7 +9,7 @@ RAW="${STRUCTURED:-}"
 REPO="$GITHUB_REPOSITORY"
 
 VALID=0
-if [ -n "$RAW" ] && printf '%s' "$RAW" | jq -e 'type=="object" and (.verdict|IN("APPROVE","REJECT")) and (.findings|type=="array") and (.summary|type=="string")' >/dev/null 2>&1; then
+if [ -n "$RAW" ] && printf '%s' "$RAW" | jq -e 'type=="object" and (.verdict|IN("APPROVE","REJECT")) and (.summary|type=="string") and (.findings|type=="array") and all(.findings[]; type=="object")' >/dev/null 2>&1; then
   VALID=1
 fi
 

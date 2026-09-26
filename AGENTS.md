@@ -7,7 +7,7 @@ Add stack/build/test commands here the moment real code lands.
 ## Build / test
 - No build. Validate workflow YAML with `python3 -c "import yaml,sys;[yaml.safe_load(open(f)) for f in sys.argv[1:]]" .github/workflows/*.yml`.
 - Gate scripts: `.github/judges/prepare-inputs.sh` (diff + contract) and `.github/judges/post-verdict.sh` (verdict → sticky comment → pass/fail). Both bash + jq + gh.
-- Test the gate: `.github/judges/selftest.sh` (13 cases, stubbed `gh`). CI runs it on any PR touching the judges (`Gate self-test`).
+- Test the gate: `.github/judges/selftest.sh` (14 cases, stubbed `gh`). CI runs it on any PR touching the judges (`Gate self-test`).
 
 ## Governance: the two judges
 Every PR runs two independent, read-only Claude reviewers. Both must return **APPROVE** or the PR cannot merge.
