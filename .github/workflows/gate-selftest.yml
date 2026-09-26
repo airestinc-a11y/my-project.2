@@ -1,0 +1,17 @@
+# Runs the gate scripts' self-test whenever the judges' machinery changes.
+name: "Gate self-test"
+on:
+  pull_request:
+    paths: [".github/judges/**", ".github/workflows/judge-*.yml", ".github/workflows/gate-selftest.yml"]
+permissions:
+  contents: read
+jobs:
+  selftest:
+    name: "Gate self-test"
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - run: .github/judges/selftest.sh

@@ -1,29 +1,32 @@
 # Judge 2 — Doubt (doubt-driven-development constitution)
 # Duty: fresh-context ADVERSARIAL review of the ARTIFACT (the diff) against the
-# CONTRACT (PR description + AGENTS.md from base). Biased to DISPROVE. Never sees
-# the author's reasoning. Read-only. Nothing merges unless this check is green.
+# CONTRACT (PR description + AGENTS.md from base). Biased to DISPROVE.
+# Two jobs on purpose: the deliberation job holds only read permissions; the
+# gate job (the required check) holds the comment token.
+# No 'edited' trigger: a skipped job would count as a passing required check.
 name: "Judge 2 — Doubt"
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, ready_for_review, edited]
+    types: [opened, synchronize, reopened, ready_for_review]
 
 concurrency:
   group: judge-doubt-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
-permissions:
-  contents: read
-  pull-requests: write
-  issues: write
+permissions: {}
 
 jobs:
-  doubt:
-    name: "Judge 2 — Doubt"
-    # On 'edited', re-run only when the base branch was retargeted (the diff changes).
-    if: ${{ github.event.action != 'edited' || contains(toJSON(github.event.changes), '"base"') }}
+  deliberate:
+    name: "Judge 2 — deliberation"
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    permissions:
+      contents: read
+      pull-requests: read
+      issues: read
+    outputs:
+      structured: ${{ steps.judge.outputs.structured_output }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -41,7 +44,7 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           # Credential: EITHER a subscription token (Pro/Max: `claude setup-token`)
-          # OR an API key. Set exactly one of the two repository secrets.
+          # OR an API key. Set exactly one of the repository secrets.
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN || secrets.TOKEN }}
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           github_token: ${{ github.token }}
@@ -80,13 +83,26 @@ jobs:
             --disallowedTools "Bash,Edit,Write,MultiEdit,NotebookEdit,WebFetch,WebSearch,Read(./.git/**),Read(//proc/**)"
             --json-schema '{"type":"object","properties":{"verdict":{"type":"string","enum":["APPROVE","REJECT"]},"confidence":{"type":"string","enum":["certain","likely","guess"]},"summary":{"type":"string"},"findings":{"type":"array","items":{"type":"object","properties":{"severity":{"type":"string","enum":["blocking","major","minor","note"]},"title":{"type":"string"},"detail":{"type":"string"},"location":{"type":"string"}},"required":["severity","title","detail"]}}},"required":["verdict","confidence","summary","findings"]}'
 
+  gate:
+    name: "Judge 2 — Doubt"
+    needs: deliberate
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
       - name: Post verdict and gate
-        if: ${{ !cancelled() }}
         run: .github/judges/post-verdict.sh
         env:
           JUDGE: "Judge 2 — Doubt"
           MARKER: "<!-- judge-2-doubt -->"
-          STRUCTURED: ${{ steps.judge.outputs.structured_output }}
+          STRUCTURED: ${{ needs.deliberate.outputs.structured }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           GH_TOKEN: ${{ github.token }}
