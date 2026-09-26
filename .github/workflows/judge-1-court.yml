@@ -39,7 +39,7 @@ jobs:
 
       - name: Sit as the Court
         id: judge
-        uses: anthropics/claude-code-action@c3d45e8e941e1b2ad7b278c57482d9c5bf1f35b3 # v1.0.99
+        uses: anthropics/claude-code-action@756cc22e19660d20e8cc9496b4f242475a7f7790 # v1.0.235
         with:
           # Credential: EITHER a subscription token (Pro/Max: `claude setup-token`)
           # OR an API key. Set exactly one of the repository secrets.
