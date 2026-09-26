@@ -44,7 +44,7 @@ Two constraints, both outside this repo's control:
 2. GitHub never counts a PR author's own approval. A solo owner therefore needs a second account or collaborator to approve PRs that touch the gate paths. Dropping `required_approving_review_count` to 0 removes that friction and reopens the self-edit hole above. Choose knowingly.
 
 ## Secrets required (exactly one)
-- `CLAUDE_CODE_OAUTH_TOKEN` — bills the owner's Claude subscription (Pro/Max/Team). Generate locally with `claude setup-token`, paste into repo → Settings → Secrets and variables → Actions.
+- `CLAUDE_CODE_OAUTH_TOKEN` (a secret named `TOKEN` is accepted as fallback) — bills the owner's Claude subscription (Pro/Max/Team). Generate locally with `claude setup-token`, paste into repo → Settings → Secrets and variables → Actions.
 - `ANTHROPIC_API_KEY` — bills the Claude Console (pay per token). Use only if no subscription token.
 Never commit either.
 

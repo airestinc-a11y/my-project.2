@@ -39,7 +39,7 @@ jobs:
         with:
           # Credential: EITHER a subscription token (Pro/Max: `claude setup-token`)
           # OR an API key. Set exactly one of the two repository secrets.
-          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN || secrets.TOKEN }}
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           github_token: ${{ github.token }}
           prompt: |
