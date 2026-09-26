@@ -28,7 +28,7 @@ jobs:
     outputs:
       structured: ${{ steps.judge.outputs.structured_output }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
           fetch-depth: 0
 
@@ -41,7 +41,7 @@ jobs:
 
       - name: Cross-examine the artifact
         id: judge
-        uses: anthropics/claude-code-action@v1
+        uses: anthropics/claude-code-action@c3d45e8e941e1b2ad7b278c57482d9c5bf1f35b3 # v1.0.99
         with:
           # Credential: EITHER a subscription token (Pro/Max: `claude setup-token`)
           # OR an API key. Set exactly one of the repository secrets.
@@ -94,7 +94,7 @@ jobs:
       pull-requests: write
       issues: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
           fetch-depth: 1
       - name: Post verdict and gate

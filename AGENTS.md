@@ -31,7 +31,8 @@ Rules that hold for every judge:
 
 ## Known limits
 - Bot-authored PRs (dependabot, renovate) and fork PRs get REJECT: the action refuses bot actors, and forks have no secrets. Set `allowed_bots` in the workflows if you want bots judged.
-- A PR that edits the gate itself (`/.github`, `/.claude`, `AGENTS.md`) runs on its own edited workflow. Only the code-owner review rule below closes that hole.
+- A PR that edits the gate itself (`/.github`, `/.claude`, `AGENTS.md`) runs on its **own** edited workflow: `pull_request` executes the YAML as committed on the PR branch, with the judges' credential secret injected. Code-owner review and branch protection only lock the **merge** button; they cannot stop that run. The real trust boundary is therefore "who can push a branch to this repository": fork PRs receive no secrets, so the credential is exposed only to collaborators with push access. Add a collaborator only if you trust them with the judges' credential, and rotate the token (`claude setup-token`) when one leaves.
+- Fail-closed by design: if the model API is down or the action is broken, no PR can merge and admins are not exempt. There is no override. If that is ever unacceptable, the only sanctioned way out is a reviewed PR that changes this file and the ruleset, not a bypass.
 
 ## Enforcement (server-side)
 Checks alone do not block the merge button. Branch protection does. Run once, with an admin token:
@@ -54,5 +55,6 @@ Never commit either.
 ## Red lines
 - Never disable, skip, or weaken a judge to get green. Fix the PR.
 - Never grant a judge write permissions.
+- Third-party actions that receive the credential stay pinned to a commit SHA, never a mutable tag.
 - Never push directly to `main`; everything goes through a PR.
 - Never commit secrets, tokens, or `.env` files.
