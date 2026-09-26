@@ -1,0 +1,6 @@
+# The judges' own machinery needs a code-owner review to change.
+# Combined with require_code_owner_reviews in .github/judges/enforce.sh, a PR
+# cannot weaken the gate it is judged by.
+/.github/   @airestinc-a11y
+/.claude/   @airestinc-a11y
+/AGENTS.md  @airestinc-a11y
