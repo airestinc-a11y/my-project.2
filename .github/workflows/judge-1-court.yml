@@ -69,6 +69,8 @@ jobs:
             Read other files in the checkout when the diff alone is insufficient.
 
             Output ONLY the structured verdict. Rules:
+            - `summary` must state, in at least three sentences, what you examined and what
+              you concluded. A one-word or placeholder summary is treated as NO VERDICT.
             - `verdict` = APPROVE only if no finding is `blocking` or `major`.
             - `confidence` uses the constitution's labels: certain / likely / guess.
             - Every finding must be specific and disprovable; no invented flaws. If you

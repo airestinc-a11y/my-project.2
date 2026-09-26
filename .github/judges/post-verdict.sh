@@ -9,7 +9,7 @@ RAW="${STRUCTURED:-}"
 REPO="$GITHUB_REPOSITORY"
 
 VALID=0
-if [ -n "$RAW" ] && printf '%s' "$RAW" | jq -e 'type=="object" and (.verdict|IN("APPROVE","REJECT")) and (.summary|type=="string") and (.findings|type=="array") and all(.findings[]; type=="object")' >/dev/null 2>&1; then
+if [ -n "$RAW" ] && printf '%s' "$RAW" | jq -e 'type=="object" and (.verdict|IN("APPROVE","REJECT")) and (.summary|type=="string") and ((.summary|gsub("\\s+";" ")|length) >= 120) and (.findings|type=="array") and all(.findings[]; type=="object" and (.severity|IN("blocking","major","minor","note")) and (.title|type=="string") and (.detail|type=="string"))' >/dev/null 2>&1; then
   VALID=1
 fi
 
@@ -17,7 +17,7 @@ if [ "$VALID" -eq 0 ]; then
   VERDICT="REJECT"
   BODY="$MARKER
 ## ⚖️ $JUDGE — ❌ NO VERDICT (counts as REJECT)
-The judge did not return a valid structured verdict.
+The judge did not return a valid structured verdict (missing, malformed, wrong shape, an unknown severity, or a hollow summary under 120 characters).
 Raw output:
 \`\`\`
 ${RAW:0:2000}

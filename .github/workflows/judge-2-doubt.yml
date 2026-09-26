@@ -73,6 +73,8 @@ jobs:
             genuine search finds none, say so and APPROVE. Every finding must cite a
             location and state the concrete input/state that triggers the failure.
 
+            `summary` must state, in at least three sentences, what you examined and what
+            you concluded. A one-word or placeholder summary is treated as NO VERDICT.
             Severity: `blocking` = fails the contract or is unsafe; `major` = likely
             defect; `minor` = real but cheap to accept; `note` = context only.
             `verdict` = APPROVE only if no finding is blocking or major.
